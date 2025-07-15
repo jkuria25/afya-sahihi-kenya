@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Heart, Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface LayoutProps {
   children: ReactNode;
@@ -10,6 +11,7 @@ interface LayoutProps {
 
 export function Layout({ children, showNavigation = true }: LayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-background">
@@ -35,10 +37,10 @@ export function Layout({ children, showNavigation = true }: LayoutProps) {
               <a href="#contact" className="text-health-body hover:text-primary transition-health">
                 Contact
               </a>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={() => navigate('/sign-in')}>
                 Sign In
               </Button>
-              <Button variant="primary_gradient" size="sm">
+              <Button variant="primary_gradient" size="sm" onClick={() => navigate('/sign-in')}>
                 Get Started
               </Button>
             </nav>
@@ -67,10 +69,10 @@ export function Layout({ children, showNavigation = true }: LayoutProps) {
                 Contact
               </a>
               <div className="flex flex-col gap-2 pt-2">
-                <Button variant="outline" size="sm" className="w-full">
+                <Button variant="outline" size="sm" className="w-full" onClick={() => navigate('/sign-in')}>
                   Sign In
                 </Button>
-                <Button variant="primary_gradient" size="sm" className="w-full">
+                <Button variant="primary_gradient" size="sm" className="w-full" onClick={() => navigate('/sign-in')}>
                   Get Started
                 </Button>
               </div>

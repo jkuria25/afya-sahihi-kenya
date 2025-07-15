@@ -1,9 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Stethoscope, Smartphone, Users, Shield } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import heroImage from '@/assets/arha-hero.jpg';
 
 export function HeroSection() {
+  const navigate = useNavigate();
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-background via-primary-glow/5 to-secondary/10">
       <div className="container mx-auto px-4 py-16 lg:py-24">
@@ -27,10 +29,10 @@ export function HeroSection() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button variant="primary_gradient" size="lg" className="flex-1 sm:flex-none">
+              <Button variant="primary_gradient" size="lg" className="flex-1 sm:flex-none" onClick={() => navigate('/sign-in')}>
                 Start Health Check
               </Button>
-              <Button variant="outline" size="lg" className="flex-1 sm:flex-none">
+              <Button variant="outline" size="lg" className="flex-1 sm:flex-none" onClick={() => navigate('/sign-in')}>
                 Learn More
               </Button>
             </div>
