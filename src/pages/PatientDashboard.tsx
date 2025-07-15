@@ -2,6 +2,12 @@ import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
+import { useState } from 'react';
 import { 
   Heart, 
   Activity, 
@@ -14,16 +20,83 @@ import {
   Bell,
   FileText,
   Baby,
-  Pill
+  Pill,
+  Upload,
+  Send,
+  Clock,
+  AlertTriangle
 } from 'lucide-react';
 
 const PatientDashboard = () => {
+  const { toast } = useToast();
+  const [symptoms, setSymptoms] = useState('');
+  const [voiceRecording, setVoiceRecording] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
   const quickActions = [
     { title: 'Check Symptoms', icon: Activity, description: 'AI-powered symptom analysis', color: 'bg-blue-50 hover:bg-blue-100' },
     { title: 'Voice Consultation', icon: Mic, description: 'Speak your symptoms in Swahili or English', color: 'bg-green-50 hover:bg-green-100' },
     { title: 'Photo Diagnosis', icon: Camera, description: 'Take a photo for visual analysis', color: 'bg-purple-50 hover:bg-purple-100' },
     { title: 'Contact CHW', icon: Phone, description: 'Call your Community Health Worker', color: 'bg-orange-50 hover:bg-orange-100' },
   ];
+
+  const handleSymptomSubmit = () => {
+    if (symptoms.trim()) {
+      toast({
+        title: "Analyzing Symptoms",
+        description: "AI is processing your symptoms. Results will appear shortly.",
+      });
+      setSymptoms('');
+    }
+  };
+
+  const handleVoiceStart = () => {
+    setVoiceRecording(true);
+    toast({
+      title: "Voice Recording Started",
+      description: "Speak clearly in Swahili or English",
+    });
+    // Simulate voice recording
+    setTimeout(() => {
+      setVoiceRecording(false);
+      toast({
+        title: "Voice Analysis Complete",
+        description: "Processing your voice consultation...",
+      });
+    }, 3000);
+  };
+
+  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      toast({
+        title: "Photo Uploaded",
+        description: "AI visual analysis in progress...",
+      });
+    }
+  };
+
+  const handleCHWContact = () => {
+    toast({
+      title: "Contacting CHW",
+      description: "Connecting you with Mary Ochieng...",
+    });
+  };
+
+  const handleReminderAction = (reminder: any) => {
+    if (reminder.urgent) {
+      toast({
+        title: "Reminder Acknowledged",
+        description: `Taking action for ${reminder.title}`,
+      });
+    } else {
+      toast({
+        title: "Viewing Details",
+        description: `Opening details for ${reminder.title}`,
+      });
+    }
+  };
 
   const healthReminders = [
     { id: 1, title: 'Malaria Medication', description: 'Take your antimalarial at 8:00 PM', time: '2 hours', urgent: true },
@@ -86,22 +159,176 @@ const PatientDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {quickActions.map((action, index) => (
-                <Button
-                  key={index}
-                  variant="ghost"
-                  className={`h-auto p-6 flex flex-col items-center gap-3 ${action.color} border`}
-                  onClick={() => {
-                    console.log(`Navigate to ${action.title}`);
-                  }}
-                >
-                  <action.icon className="w-10 h-10" />
-                  <div className="text-center">
-                    <div className="font-medium text-base">{action.title}</div>
-                    <div className="text-sm text-health-body mt-1">{action.description}</div>
+              {/* Symptom Checker */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="h-auto p-6 flex flex-col items-center gap-3 bg-blue-50 hover:bg-blue-100 border"
+                  >
+                    <Activity className="w-10 h-10" />
+                    <div className="text-center">
+                      <div className="font-medium text-base">Check Symptoms</div>
+                      <div className="text-sm text-health-body mt-1">AI-powered symptom analysis</div>
+                    </div>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      <Activity className="w-5 h-5" />
+                      Symptom Checker
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="symptoms">Describe your symptoms</Label>
+                      <Textarea
+                        id="symptoms"
+                        placeholder="Tell us how you're feeling... (in English or Swahili)"
+                        value={symptoms}
+                        onChange={(e) => setSymptoms(e.target.value)}
+                        className="min-h-24"
+                      />
+                    </div>
+                    <Button onClick={handleSymptomSubmit} className="w-full">
+                      <Send className="w-4 h-4 mr-2" />
+                      Analyze Symptoms
+                    </Button>
                   </div>
-                </Button>
-              ))}
+                </DialogContent>
+              </Dialog>
+
+              {/* Voice Consultation */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="h-auto p-6 flex flex-col items-center gap-3 bg-green-50 hover:bg-green-100 border"
+                  >
+                    <Mic className="w-10 h-10" />
+                    <div className="text-center">
+                      <div className="font-medium text-base">Voice Consultation</div>
+                      <div className="text-sm text-health-body mt-1">Speak your symptoms in Swahili or English</div>
+                    </div>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      <Mic className="w-5 h-5" />
+                      Voice Consultation
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 text-center">
+                    <div className="p-8">
+                      <div className={`w-24 h-24 mx-auto rounded-full flex items-center justify-center ${
+                        voiceRecording ? 'bg-red-100 animate-pulse' : 'bg-green-100'
+                      }`}>
+                        <Mic className={`w-12 h-12 ${voiceRecording ? 'text-red-600' : 'text-green-600'}`} />
+                      </div>
+                      <p className="mt-4 text-health-body">
+                        {voiceRecording ? 'Listening... Speak clearly' : 'Click to start voice recording'}
+                      </p>
+                    </div>
+                    <Button 
+                      onClick={handleVoiceStart} 
+                      disabled={voiceRecording}
+                      className="w-full"
+                    >
+                      {voiceRecording ? 'Recording...' : 'Start Voice Analysis'}
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              {/* Photo Diagnosis */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="h-auto p-6 flex flex-col items-center gap-3 bg-purple-50 hover:bg-purple-100 border"
+                  >
+                    <Camera className="w-10 h-10" />
+                    <div className="text-center">
+                      <div className="font-medium text-base">Photo Diagnosis</div>
+                      <div className="text-sm text-health-body mt-1">Take a photo for visual analysis</div>
+                    </div>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      <Camera className="w-5 h-5" />
+                      Photo Diagnosis
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                      <Upload className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+                      <p className="text-health-body mb-4">Upload a photo of skin condition, wound, or symptom</p>
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePhotoUpload}
+                        className="hidden"
+                        id="photo-upload"
+                      />
+                      <Label htmlFor="photo-upload" className="cursor-pointer">
+                        <Button variant="outline" asChild>
+                          <span>Choose Photo</span>
+                        </Button>
+                      </Label>
+                      {selectedFile && (
+                        <p className="mt-2 text-sm text-green-600">
+                          Selected: {selectedFile.name}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              {/* Contact CHW */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="h-auto p-6 flex flex-col items-center gap-3 bg-orange-50 hover:bg-orange-100 border"
+                  >
+                    <Phone className="w-10 h-10" />
+                    <div className="text-center">
+                      <div className="font-medium text-base">Contact CHW</div>
+                      <div className="text-sm text-health-body mt-1">Call your Community Health Worker</div>
+                    </div>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      <Phone className="w-5 h-5" />
+                      Contact CHW
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div className="bg-blue-50 p-4 rounded-lg">
+                      <h3 className="font-semibold text-health-heading">Mary Ochieng</h3>
+                      <p className="text-sm text-health-body">Community Health Worker</p>
+                      <p className="text-sm text-health-body">Available: 8:00 AM - 6:00 PM</p>
+                    </div>
+                    <div className="space-y-2">
+                      <Button onClick={handleCHWContact} className="w-full">
+                        <Phone className="w-4 h-4 mr-2" />
+                        Call: +254 701 234 567
+                      </Button>
+                      <Button variant="outline" className="w-full">
+                        <MessageSquare className="w-4 h-4 mr-2" />
+                        Send Message
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           </CardContent>
         </Card>
@@ -129,9 +356,46 @@ const PatientDashboard = () => {
                       <p className="text-sm text-health-body">{reminder.description}</p>
                       <p className="text-xs text-health-small mt-1">Due in {reminder.time}</p>
                     </div>
-                    <Button size="sm" variant={reminder.urgent ? "default" : "outline"}>
-                      {reminder.urgent ? 'Take Action' : 'View Details'}
-                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button size="sm" variant={reminder.urgent ? "default" : "outline"}>
+                          {reminder.urgent ? 'Take Action' : 'View Details'}
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-md">
+                        <DialogHeader>
+                          <DialogTitle className="flex items-center gap-2">
+                            {reminder.urgent ? <AlertTriangle className="w-5 h-5 text-red-600" /> : <Clock className="w-5 h-5" />}
+                            {reminder.title}
+                          </DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div className={`p-4 rounded-lg ${reminder.urgent ? 'bg-red-50' : 'bg-blue-50'}`}>
+                            <p className="text-health-body">{reminder.description}</p>
+                            <p className="text-sm text-health-small mt-2">Due in {reminder.time}</p>
+                          </div>
+                          {reminder.urgent && (
+                            <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                              <h4 className="font-semibold text-yellow-800 mb-2">Important Instructions:</h4>
+                              <ul className="text-sm text-yellow-700 space-y-1">
+                                <li>• Take medication exactly as prescribed</li>
+                                <li>• Set an alarm for daily reminder</li>
+                                <li>• Contact CHW if you miss a dose</li>
+                              </ul>
+                            </div>
+                          )}
+                          <div className="flex gap-2">
+                            <Button onClick={() => handleReminderAction(reminder)} className="flex-1">
+                              {reminder.urgent ? 'Mark as Taken' : 'Schedule'}
+                            </Button>
+                            <Button variant="outline" className="flex-1">
+                              <Phone className="w-4 h-4 mr-2" />
+                              Call CHW
+                            </Button>
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </div>
               ))}
