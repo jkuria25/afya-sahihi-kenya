@@ -10,6 +10,10 @@ Provides crucial decision support for frontline health workers.
 Operates seamlessly offline, ensuring connectivity in remote areas.
 Supports local languages to maximize accessibility and user adoption.
 
+Presentation powerpoint
+
+https://www.canva.com/design/DAGtULbXLCk/qDNY3iGBpgfMw9nLyeymkQ/edit?utm_content=DAGtULbXLCk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+
 
 
 Follow these steps:
