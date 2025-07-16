@@ -15,7 +15,6 @@ Presentation powerpoint
 https://www.canva.com/design/DAGtULbXLCk/qDNY3iGBpgfMw9nLyeymkQ/edit?utm_content=DAGtULbXLCk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
 
 
-
 Follow these steps:
 
 ```sh
